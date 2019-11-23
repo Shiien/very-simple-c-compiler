@@ -12,9 +12,10 @@ TreeNode::TreeNode(int lineno, NodeType type)
 
 void TreeNode::addChild(TreeNode *node)
 {
-    if (node == nullptr
-            || (node->nodeType == NODE_STATMENT
-                && static_cast<StatementNode*>(node)->type == StatementNode::StatementNode::ST_EMPTY)) return;
+    // if (node == nullptr
+    //         || (node->nodeType == NODE_STATMENT
+    //             && static_cast<StatementNode*>(node)->type == StatementNode::StatementNode::ST_EMPTY)) return;
+    if(node==nullptr) return;
     if (child == nullptr) {
         child = node;
         return;
@@ -127,6 +128,7 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
     case OP_BXORAS: return "^=";
     case OP_BORAS: return "|=";
     case OP_ASSIGN: return "=";
+    case OP_BOOL: return "BOOL";
     }
     return "unknown";
 }

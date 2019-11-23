@@ -1,0 +1,12 @@
+int main(){
+	int a,b;
+	char c;
+	a=b+c;
+	if(c&&a);
+	for(;c&&a;);
+	while(c&&a){
+		a+b;
+	}
+	if(a+b);
+	return 0;
+}

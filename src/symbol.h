@@ -18,6 +18,7 @@ public /* types */:
         VALUE_DOUBLE,
         VALUE_STRING,
         VALUE_CHAR,
+        VALUE_BOOL,
         VALUE_ERROR
     };
 

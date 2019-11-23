@@ -17,6 +17,8 @@ string Symbol::getSymbolName(Symbol *s)
         return "string";
     case Symbol::VALUE_VOID:
         return "void";
+    case Symbol::VALUE_BOOL:
+        return "bool";
     }
     return "--";
 }

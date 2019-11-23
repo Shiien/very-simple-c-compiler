@@ -14,14 +14,15 @@ void showTree(TreeNode* root) {
         children = children -> sibling;
     }
     Symbol* ownSymbol = nullptr;
-
+    Symbol *cl=nullptr;
+    Symbol *cr=nullptr;
     cout << "(Line " << root -> lineno << ") " << root->nodeID << ": ";
     switch (root->nodeType) {
     case TreeNode::NODE_NONE:
         cout << "[Unknown] ";
         break;
     case TreeNode::NODE_STATMENT:
-        cout << "[Statement ";
+        cout << "[Statement <void>";
         switch (static_cast<StatementNode*>(root)->type) {
         case StatementNode::ST_NONE:
             cout << "Unknown";
@@ -87,15 +88,23 @@ void showTree(TreeNode* root) {
         cout << Symbol::getSymbolName(ownSymbol);
 
         cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
+        
         break;
 
     case TreeNode::NODE_OPERATOR:
         ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
+        
         cout << "[Operator ";
         cout << OperatorNode::getTypeStr(static_cast<OperatorNode*>(root)->type);
         cout << " <";
         cout << Symbol::getSymbolName(ownSymbol);
         cout << ">]";
+        if(static_cast<OperatorNode*>(root)->type==OperatorNode::OP_BOOL){
+            if(ownSymbol->type!=Symbol::VALUE_INT||ownSymbol->type!=Symbol::VALUE_BOOL){
+                cerr<<" expression is not INT-TYPE either BOOL-TYPE  "<<endl;
+            }
+            break;
+        }
         switch (static_cast<OperatorNode*>(root)->type) {
         case OperatorNode::OP_ASSIGN:
         case OperatorNode::OP_ADDAS:
@@ -107,7 +116,14 @@ void showTree(TreeNode* root) {
         case OperatorNode::OP_BXORAS:
         case OperatorNode::OP_LSHFTAS:
         case OperatorNode::OP_RSHFTAS:
-        default: break;
+        default: 
+        break;
+        }
+        cl=static_cast<DeclarationNode*>(root->child)->symbol;
+        cr=static_cast<DeclarationNode*>(root->child->sibling)->symbol;
+        if(cr->type!=cl->type){
+            cerr<<endl<<"type is error ["<<Symbol::getSymbolName(cl)\
+            <<" , "<<Symbol::getSymbolName(cr)<<" ]";
         }
         break;
     }
@@ -150,8 +166,8 @@ int main(int argc, char *argv[])
         temp = temp -> sibling;
     }
 
-    extern void generateASM();
-    generateASM();
+    // extern void generateASM();
+    // generateASM();
 
     return 0;
 }

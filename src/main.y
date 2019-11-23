@@ -69,7 +69,7 @@
 
 %type <node> node
 %type <node> declaration id_list id_pair
-%type <node> expression assignment logical comparative additive multiplicative bitshift bitbinary postfix cast
+%type <node> bool_expression expression assignment logical comparative additive multiplicative bitshift bitbinary postfix cast
 %type <node> if_condition if_else_condition for_statement while_statement do_while_statement return_statement function_declaration_statement
 %type <node> statement program_empty program
 %type <symbol> id_prefix
@@ -149,27 +149,27 @@ function_declaration_statement : type IDENTIFIER LP RP lb_scope program_empty RB
   }
 ;
 
-if_condition : K_IF LP expression RP statement %prec IFX {
+if_condition : K_IF LP bool_expression RP statement %prec IFX {
     $$ = new StatementNode(lineno, StatementNode::ST_IF, {$3, $5});
   }
 ;
 
-if_else_condition : K_IF LP expression RP statement K_ELSE statement {
+if_else_condition : K_IF LP bool_expression RP statement K_ELSE statement {
     $$ = new StatementNode(lineno, StatementNode::ST_IF_ELSE, {$3, $5, $7});
   }
 ;
 
-for_statement : K_FOR LP expression SEMICOLON expression SEMICOLON expression RP statement {
+for_statement : K_FOR LP expression SEMICOLON bool_expression SEMICOLON expression RP statement {
     $$ = new StatementNode(lineno, StatementNode::ST_FOR, {$3, $5, $7, $9});
   }
 ;
 
-while_statement : K_WHILE LP expression RP statement {
+while_statement : K_WHILE LP bool_expression RP statement {
     $$ = new StatementNode(lineno, StatementNode::ST_WHILE, {$3, $5});
   }
 ;
 
-do_while_statement : K_DO lb_scope statement RB K_WHILE LP expression RP SEMICOLON {
+do_while_statement : K_DO lb_scope statement RB K_WHILE LP bool_expression RP SEMICOLON {
     $$ = new StatementNode(lineno, StatementNode::ST_DO_WHILE, {$3, $7});
     scope->popScope();
   }
@@ -220,6 +220,10 @@ id_prefix : IDENTIFIER {
     $$ = symbol;
   }
 ;
+
+bool_expression : expression {
+      $$ = new OperatorNode(lineno,OperatorNode::OP_BOOL,{$1});
+  }
 
 expression : assignment {
     $$ = $1;

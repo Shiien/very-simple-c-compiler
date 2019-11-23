@@ -150,7 +150,9 @@ public /* types */:
         OP_BANDAS,
         OP_BXORAS,
         OP_BORAS,
-        OP_ASSIGN
+        OP_ASSIGN,
+
+        OP_BOOL
     };
 
 public /* statics */:

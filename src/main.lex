@@ -103,6 +103,15 @@ RESERVED "auto"|"enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"un
 "{"	return LB;
 "}"	return RB;
 
+"//" {
+  int c;
+  while((c=yyinput())!=0){
+    if(c=='\n'){
+      ++lineno;
+      break;
+    }
+  }
+}
 
 "/*" {
   int c;
@@ -120,7 +129,6 @@ RESERVED "auto"|"enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"un
   }
 }
 
-{IDENTIFIER}: return LABEL;
 
 "true" yylval.symbol = new Constant(Constant::VALUE_INT, "1"); return SYMBOL;
 "false" yylval.symbol = new Constant(Constant::VALUE_INT, "0"); return SYMBOL;
