@@ -15,9 +15,9 @@
 
 // ---
 
-%token T_CHAR T_INT T_DOUBLE T_VOID T_STRING
+%token T_CHAR T_INT T_DOUBLE T_VOID T_STRING T_BOOL
 
-%token K_BREAK K_CASE K_CONTINUE K_DEFAULT K_DO K_ELSE K_FOR K_GOTO K_IF K_RET K_SWITCH K_WHILE
+%token K_BREAK K_CASE K_CONTINUE K_DEFAULT K_DO K_ELSE K_FOR K_GOTO K_IF K_RET K_SWITCH K_WHILE K_OUTPUT
 
 %token LP RP
 
@@ -70,7 +70,7 @@
 %type <node> node
 %type <node> declaration id_list id_pair
 %type <node> bool_expression expression assignment logical comparative additive multiplicative bitshift bitbinary postfix cast
-%type <node> if_condition if_else_condition for_statement while_statement do_while_statement return_statement function_declaration_statement
+%type <node> if_condition if_else_condition for_statement while_statement do_while_statement return_statement function_declaration_statement output_statement
 %type <node> statement program_empty program
 %type <symbol> id_prefix
 
@@ -139,6 +139,9 @@ statement : expression SEMICOLON {
   | function_declaration_statement {
     $$ = $1;
   }
+  | output_statement {
+    $$ = $1;
+  }
 ;
 
 function_declaration_statement : type IDENTIFIER LP RP lb_scope program_empty RB {
@@ -148,6 +151,12 @@ function_declaration_statement : type IDENTIFIER LP RP lb_scope program_empty RB
     $$ = new FuncStatementNode(lineno, symbol, {$6});
   }
 ;
+
+output_statement : K_OUTPUT LP expression RP SEMICOLON {
+    $$ = new StatementNode(lineno, StatementNode::ST_OUTPUT, {$3});
+  }
+;
+
 
 if_condition : K_IF LP bool_expression RP statement %prec IFX {
     $$ = new StatementNode(lineno, StatementNode::ST_IF, {$3, $5});
@@ -186,6 +195,7 @@ declaration : type id_list {
 ;
 
 type  : T_INT { currentType = Symbol::VALUE_INT; }
+      | T_BOOL {currentType = Symbol::VALUE_BOOL;}
       | T_CHAR { currentType = Symbol::VALUE_CHAR; }
       | T_STRING { currentType = Symbol::VALUE_STRING; }
       | T_DOUBLE { currentType = Symbol::VALUE_DOUBLE; }
@@ -273,7 +283,7 @@ assignment : logical {
   | node BORAS logical {
     $$ = new OperatorNode(lineno, OperatorNode::OP_BORAS, {$3, $1});
   }
-  | node ASSIGN logical {
+  | node ASSIGN assignment {
     $$ = new OperatorNode(lineno, OperatorNode::OP_ASSIGN, {$3, $1});
   }
 ;

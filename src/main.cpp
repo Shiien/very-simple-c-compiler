@@ -1,29 +1,35 @@
 #include "common.h"
 #include <fstream>
 
-extern TreeNode * root;
-extern FILE* yyin;
+extern TreeNode *root;
+extern FILE *yyin;
 
-void showTree(TreeNode* root) {
+void showTree(TreeNode *root)
+{
 
-    if (root == nullptr) return;
-
-    auto children = root -> child;
-    while (children) {
+    if (root == nullptr)
+        return;
+    auto children = root->child;
+    while (children)
+    {
         showTree(children);
-        children = children -> sibling;
+        children = children->sibling;
     }
-    Symbol* ownSymbol = nullptr;
-    Symbol *cl=nullptr;
-    Symbol *cr=nullptr;
-    cout << "(Line " << root -> lineno << ") " << root->nodeID << ": ";
-    switch (root->nodeType) {
+    Symbol *ownSymbol = nullptr;
+    Symbol *cl = nullptr;
+    Symbol *cr = nullptr;
+    cout << "(Line " << root->lineno << ") " << root->nodeID << ": ";
+    //cout<<root->nodeType<<endl;
+
+    switch (root->nodeType)
+    {
     case TreeNode::NODE_NONE:
         cout << "[Unknown] ";
         break;
     case TreeNode::NODE_STATMENT:
         cout << "[Statement <void>";
-        switch (static_cast<StatementNode*>(root)->type) {
+        switch (static_cast<StatementNode *>(root)->type)
+        {
         case StatementNode::ST_NONE:
             cout << "Unknown";
             break;
@@ -47,7 +53,7 @@ void showTree(TreeNode* root) {
             break;
         case StatementNode::ST_FUNCTION:
             cout << "Function<";
-            cout << static_cast<FuncStatementNode*>(root)->symbol->value << ">";
+            cout << static_cast<FuncStatementNode *>(root)->symbol->value << ">";
             break;
         case StatementNode::ST_IF:
             cout << "If";
@@ -64,15 +70,21 @@ void showTree(TreeNode* root) {
         case StatementNode::ST_GOTO:
             cout << "Goto";
             break;
+        case StatementNode::ST_OUTPUT:
+            cout<< "Output";
+            if(root->child->symbol->type==Symbol::VALUE_BOOL){
+                cerr<<" output can't be bool"<<endl;
+            }
+            break;
         }
         cout << "]";
         break;
 
     case TreeNode::NODE_FUNCCALL:
         cout << "[FuncCall<";
-        ownSymbol = static_cast<DeclarationNode*>(root)->symbol;
+        ownSymbol = static_cast<DeclarationNode *>(root)->symbol;
         cout << Symbol::getSymbolName(ownSymbol);
-        cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
+        cout << "> " << static_cast<DeclarationNode *>(root)->symbol->value << "] ";
         break;
 
     case TreeNode::NODE_DECLARATION:
@@ -80,75 +92,134 @@ void showTree(TreeNode* root) {
         // fall through
         [[clang::fallthrough]];
     case TreeNode::NODE_EXPRESSION:
-        if(root->nodeType == TreeNode::NODE_EXPRESSION)
+        if (root->nodeType == TreeNode::NODE_EXPRESSION)
             cout << "[Expression<";
 
-        ownSymbol = static_cast<DeclarationNode*>(root)->symbol;
+        ownSymbol = static_cast<DeclarationNode *>(root)->symbol;
 
         cout << Symbol::getSymbolName(ownSymbol);
 
-        cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
-        
+        cout << "> " << static_cast<DeclarationNode *>(root)->symbol->value << "] ";
+
         break;
 
     case TreeNode::NODE_OPERATOR:
-        ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
-        
+        switch (static_cast<OperatorNode *>(root)->type)
+        {
+        case OperatorNode::OP_NOT:
+        case OperatorNode::OP_BOOL:
+            if (root->child->symbol->type != Symbol::VALUE_BOOL)
+            {
+                cerr << " expression is not BOOL-TYPE  " << endl;
+            }
+            ownSymbol = root->symbol = new OpNode(Symbol::VALUE_BOOL, "");
+            break;
+        case OperatorNode::OP_LAND:
+        case OperatorNode::OP_LOR:
+            cl = static_cast<DeclarationNode *>(root->child)->symbol;
+            cr = static_cast<DeclarationNode *>(root->child->sibling)->symbol;
+            if (cr->type != cl->type || cl->type != Symbol::VALUE_BOOL || cr->type != Symbol::VALUE_BOOL)
+            {
+                cerr << endl
+                     << "type is error [" << Symbol::getSymbolName(cl)
+                     << " , " << Symbol::getSymbolName(cr) << " ] or maybe they are not bool";
+            }
+            ownSymbol = root->symbol = new OpNode(Symbol::VALUE_BOOL, "");
+            break;
+        case OperatorNode::OP_MORE:
+        case OperatorNode::OP_MOREEQ:
+        case OperatorNode::OP_LESS:
+        case OperatorNode::OP_LESSEQ:
+        case OperatorNode::OP_EQ:
+        case OperatorNode::OP_NE:
+            cl = static_cast<DeclarationNode *>(root->child)->symbol;
+            cr = static_cast<DeclarationNode *>(root->child->sibling)->symbol;
+            if (cr->type != cl->type)
+            {
+                cerr << endl
+                     << "type is error [" << Symbol::getSymbolName(cl)
+                     << " , " << Symbol::getSymbolName(cr) << " ]";
+            }
+            ownSymbol = root->symbol = new OpNode(Symbol::VALUE_BOOL, "");
+            break;
+        case OperatorNode::OP_BREV:
+            ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
+            break;
+        default:
+            cl = static_cast<DeclarationNode *>(root->child)->symbol;
+            cr = static_cast<DeclarationNode *>(root->child->sibling)->symbol;
+            if (cr->type != cl->type)
+            {
+                cerr << endl
+                     << "type is error [" << Symbol::getSymbolName(cl)
+                     << " , " << Symbol::getSymbolName(cr) << " ]";
+            }
+            ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
+            break;
+        }
         cout << "[Operator ";
-        cout << OperatorNode::getTypeStr(static_cast<OperatorNode*>(root)->type);
+        cout << OperatorNode::getTypeStr(static_cast<OperatorNode *>(root)->type);
         cout << " <";
         cout << Symbol::getSymbolName(ownSymbol);
         cout << ">]";
-        if(static_cast<OperatorNode*>(root)->type==OperatorNode::OP_BOOL){
-            if(ownSymbol->type!=Symbol::VALUE_INT||ownSymbol->type!=Symbol::VALUE_BOOL){
-                cerr<<" expression is not INT-TYPE either BOOL-TYPE  "<<endl;
-            }
-            break;
-        }
-        switch (static_cast<OperatorNode*>(root)->type) {
-        case OperatorNode::OP_ASSIGN:
-        case OperatorNode::OP_ADDAS:
-        case OperatorNode::OP_SUBAS:
-        case OperatorNode::OP_MULAS:
-        case OperatorNode::OP_DIVAS:
-        case OperatorNode::OP_BORAS:
-        case OperatorNode::OP_BANDAS:
-        case OperatorNode::OP_BXORAS:
-        case OperatorNode::OP_LSHFTAS:
-        case OperatorNode::OP_RSHFTAS:
-        default: 
         break;
-        }
-        cl=static_cast<DeclarationNode*>(root->child)->symbol;
-        cr=static_cast<DeclarationNode*>(root->child->sibling)->symbol;
-        if(cr->type!=cl->type){
-            cerr<<endl<<"type is error ["<<Symbol::getSymbolName(cl)\
-            <<" , "<<Symbol::getSymbolName(cr)<<" ]";
-        }
-        break;
+        // switch (static_cast<OperatorNode *>(root)->type)
+        // {
+        // case OperatorNode::OP_ASSIGN:
+        // case OperatorNode::OP_ADDAS:
+        // case OperatorNode::OP_SUBAS:
+        // case OperatorNode::OP_MULAS:
+        // case OperatorNode::OP_DIVAS:
+        // case OperatorNode::OP_BORAS:
+        // case OperatorNode::OP_BANDAS:
+        // case OperatorNode::OP_BXORAS:
+        // case OperatorNode::OP_LSHFTAS:
+        // case OperatorNode::OP_RSHFTAS:
+        // default:
+        //     break;
+        // }
+        // cl = static_cast<DeclarationNode *>(root->child)->symbol;
+        // cr = static_cast<DeclarationNode *>(root->child->sibling)->symbol;
+        // if (cr->type != cl->type)
+        // {
+        //     cerr << endl
+        //          << "type is error [" << Symbol::getSymbolName(cl)
+        //          << " , " << Symbol::getSymbolName(cr) << " ]";
+        // }
+        //break;
     }
-    children = root -> child;
-    if(children) {
-        cout << endl << "\tChildren: ";
+
+    children = root->child;
+    if (children)
+    {
+        cout << endl
+             << "\tChildren: ";
     }
-    while (children) {
+    while (children)
+    {
         cout << children->nodeID << " ";
-        children = children -> sibling;
+        children = children->sibling;
     }
     cout << endl;
-    children = root -> child;
+    children = root->child;
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc == 2) {
-        FILE* fin = fopen(argv[1], "r");
-        if (fin != nullptr) {
+    if (argc == 2)
+    {
+        FILE *fin = fopen(argv[1], "r");
+        if (fin != nullptr)
+        {
             yyin = fin;
-        } else {
+        }
+        else
+        {
             cerr << "failed to open file: " << argv[1] << endl;
         }
-    } else {
+    }
+    else
+    {
 #if YYDEBUG != 0
         extern int yydebug;
         yydebug = 1;
@@ -159,11 +230,12 @@ int main(int argc, char *argv[])
 
     yyparse();
 
-    TreeNode* temp = root;
+    TreeNode *temp = root;
 
-    while (temp) {
+    while (temp)
+    {
         showTree(temp);
-        temp = temp -> sibling;
+        temp = temp->sibling;
     }
 
     // extern void generateASM();

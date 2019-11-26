@@ -59,7 +59,8 @@ public /* types */:
         ST_BREAK,
         ST_CONTINUE,
         ST_GOTO,
-        ST_FUNCTION
+        ST_FUNCTION,
+        ST_OUTPUT
     };
 
 public:

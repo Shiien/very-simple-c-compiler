@@ -25,7 +25,8 @@ RESERVED "auto"|"enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"un
 
 {RESERVED} cerr << "[line " << lineno << "]" << "reserved token: " << yytext << endl;
 
-"int"|"bool"|"long" return T_INT;
+"int"|"long" return T_INT;
+"bool" return T_BOOL;
 "char" return T_CHAR;
 "string" return T_STRING;
 "double"|"float" return T_DOUBLE;
@@ -46,6 +47,7 @@ RESERVED "auto"|"enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"un
 "return" return K_RET;
 "switch" return K_SWITCH;
 "while"	return K_WHILE;
+"output" return K_OUTPUT;
 
 "(" return LP;
 ")" return RP;
