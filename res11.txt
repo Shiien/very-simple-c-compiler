@@ -1,0 +1,128 @@
+(Line 3) 1: [Declaration<int> a] 
+(Line 3) 2: [Declaration<int> b] 
+(Line 3) 3: [Declaration<int> c] 
+(Line 4) 4: [Declaration<char> D4] 
+(Line 4) 5: [Declaration<char> d] 
+(Line 5) 7: [Expression<char> A] 
+(Line 5) 6: [Expression<char> D4] 
+(Line 5) 8: [Operator = <char>]
+	Children: 7 6 
+(Line 6) 10: [Expression<int> 4] 
+(Line 6) 9: [Expression<char> d] 
+(Line 6) 11: [Operator = <int>]
+	Children: 10 9 
+(Line 7) 15: [Expression<int> 2] 
+(Line 7) 14: [Expression<int> c] 
+(Line 7) 16: [Operator = <int>]
+	Children: 15 14 
+(Line 7) 13: [Expression<int> b] 
+(Line 7) 17: [Operator = <int>]
+	Children: 16 13 
+(Line 7) 12: [Expression<int> a] 
+(Line 7) 18: [Operator = <int>]
+	Children: 17 12 
+(Line 8) 22: [Expression<int> 2] 
+(Line 8) 21: [Expression<int> c] 
+(Line 8) 23: [Operator = <int>]
+	Children: 22 21 
+(Line 8) 20: [Expression<char> D4] 
+(Line 8) 24: [Operator = <int>]
+	Children: 23 20 
+(Line 8) 19: [Expression<int> a] 
+(Line 8) 25: [Operator = <int>]
+	Children: 24 19 
+(Line 9) 27: [Expression<char> D4] 
+(Line 9) 28: [Expression<int> a] 
+(Line 9) 29: [Operator + <char>]
+	Children: 27 28 
+(Line 9) 26: [Expression<char> D4] 
+(Line 9) 30: [Operator = <char>]
+	Children: 29 26 
+(Line 11) 31: [Expression<int> 2] 
+(Line 11) 32: [Operator ! <bool>]
+	Children: 31 
+(Line 11) 33: [Operator BOOL <bool>]
+	Children: 32 
+(Line 14) 34: [Expression<char> D4] 
+(Line 14) 35: [Operator BOOL <bool>]
+	Children: 34 
+(Line 15) 36: [Expression<int> c] 
+(Line 15) 37: [Expression<int> 0] 
+(Line 15) 38: [Operator > <bool>]
+	Children: 36 37 
+(Line 15) 39: [Expression<int> a] 
+(Line 15) 40: [Expression<char> D4] 
+(Line 15) 41: [Operator <= <bool>]
+	Children: 39 40 
+(Line 15) 42: [Operator && <bool>]
+	Children: 38 41 
+(Line 15) 43: [Operator BOOL <bool>]
+	Children: 42 
+(Line 18) 45: [Expression<int> 8] 
+(Line 18) 44: [Expression<int> c] 
+(Line 18) 46: [Operator = <int>]
+	Children: 45 44 
+(Line 18) 47: [Expression<int> 9] 
+(Line 18) 48: [Operator BOOL <bool>]
+	Children: 47 
+(Line 18) 49: [Statement <void>Empty]
+(Line 19) 51: [Expression<int> 8] 
+(Line 19) 50: [Expression<int> c] 
+(Line 19) 52: [Operator = <int>]
+	Children: 51 50 
+(Line 19) 53: [Expression<int> a] 
+(Line 19) 54: [Expression<int> 4] 
+(Line 19) 55: [Operator + <int>]
+	Children: 53 54 
+(Line 19) 56: [Expression<int> b] 
+(Line 19) 57: [Operator || <bool>]
+	Children: 55 56 
+(Line 19) 58: [Operator BOOL <bool>]
+	Children: 57 
+(Line 19) 59: [Statement <void>Empty]
+(Line 20) 61: [Expression<int> c] 
+(Line 20) 62: [Expression<int> 2] 
+(Line 20) 63: [Operator / <int>]
+	Children: 61 62 
+(Line 20) 64: [Expression<int> 1] 
+(Line 20) 65: [Operator + <int>]
+	Children: 63 64 
+(Line 20) 60: [Expression<int> c] 
+(Line 20) 66: [Operator = <int>]
+	Children: 65 60 
+(Line 20) 67: [Statement <void>For]
+	Children: 52 58 59 66 
+(Line 20) 68: [Statement <void>For]
+	Children: 46 48 49 67 
+(Line 21) 69: [Statement <void>Scope]
+	Children: 68 
+(Line 24) 71: [Expression<int> 3] 
+(Line 24) 70: [Expression<int> a] 
+(Line 24) 72: [Operator = <int>]
+	Children: 71 70 
+(Line 26) 73: [Statement <void>Scope]
+	Children: 72 
+(Line 26) 74: [Statement <void>If-Else]
+	Children: 43 69 73 
+(Line 27) 75: [Statement <void>If]
+	Children: 35 74 
+(Line 27) 77: [Expression<int> 1] 
+(Line 27) 76: [Expression<int> b] 
+(Line 27) 78: [Operator = <int>]
+	Children: 77 76 
+(Line 28) 79: [Statement <void>Scope]
+	Children: 75 78 
+(Line 28) 80: [Statement <void>While]
+	Children: 33 79 
+(Line 29) 82: [Expression<string> %d] 
+(Line 29) 83: [Expression<int> a] 
+(Line 29) 84: [Expression<int> b] 
+(Line 29) 85: [Operator < <bool>]
+	Children: 83 84 
+(Line 29) 86: [FuncCall<int> printf] 
+	Children: 82 85 
+(Line 31) 87: [Expression<int> 0] 
+(Line 31) 88: [Statement <void>Return]
+	Children: 87 
+(Line 32) 89: [Statement <void>Function<main>]
+	Children: 1 2 3 4 5 8 11 18 25 30 80 86 88 

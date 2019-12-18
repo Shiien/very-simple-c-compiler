@@ -53,7 +53,7 @@ void showTree(TreeNode *root)
             break;
         case StatementNode::ST_FUNCTION:
             cout << "Function<";
-            cout << static_cast<FuncStatementNode *>(root)->symbol->value << ">";
+            cout << static_cast<FuncStatementNode *>(root)->symbol->value << "  " << Symbol::getSymbolName(static_cast<FuncStatementNode *>(root)->symbol) << ">";
             break;
         case StatementNode::ST_IF:
             cout << "If";
@@ -71,9 +71,10 @@ void showTree(TreeNode *root)
             cout << "Goto";
             break;
         case StatementNode::ST_OUTPUT:
-            cout<< "Output";
-            if(root->child->symbol->type==Symbol::VALUE_BOOL){
-                cerr<<" output can't be bool"<<endl;
+            cout << "Output";
+            if (root->child->symbol->type == Symbol::VALUE_BOOL)
+            {
+                cerr << " output can't be bool" << endl;
             }
             break;
         }
@@ -114,6 +115,9 @@ void showTree(TreeNode *root)
             }
             ownSymbol = root->symbol = new OpNode(Symbol::VALUE_BOOL, "");
             break;
+        case OperatorNode::OP_TADDR:
+            ownSymbol = root->symbol = new OpNode(Symbol::VALUE_INT, "");
+            break;
         case OperatorNode::OP_LAND:
         case OperatorNode::OP_LOR:
             cl = static_cast<DeclarationNode *>(root->child)->symbol;
@@ -143,6 +147,8 @@ void showTree(TreeNode *root)
             ownSymbol = root->symbol = new OpNode(Symbol::VALUE_BOOL, "");
             break;
         case OperatorNode::OP_BREV:
+        case OperatorNode::OP_INC:
+        case OperatorNode::OP_DEC:
             ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
             break;
         default:
@@ -163,30 +169,6 @@ void showTree(TreeNode *root)
         cout << Symbol::getSymbolName(ownSymbol);
         cout << ">]";
         break;
-        // switch (static_cast<OperatorNode *>(root)->type)
-        // {
-        // case OperatorNode::OP_ASSIGN:
-        // case OperatorNode::OP_ADDAS:
-        // case OperatorNode::OP_SUBAS:
-        // case OperatorNode::OP_MULAS:
-        // case OperatorNode::OP_DIVAS:
-        // case OperatorNode::OP_BORAS:
-        // case OperatorNode::OP_BANDAS:
-        // case OperatorNode::OP_BXORAS:
-        // case OperatorNode::OP_LSHFTAS:
-        // case OperatorNode::OP_RSHFTAS:
-        // default:
-        //     break;
-        // }
-        // cl = static_cast<DeclarationNode *>(root->child)->symbol;
-        // cr = static_cast<DeclarationNode *>(root->child->sibling)->symbol;
-        // if (cr->type != cl->type)
-        // {
-        //     cerr << endl
-        //          << "type is error [" << Symbol::getSymbolName(cl)
-        //          << " , " << Symbol::getSymbolName(cr) << " ]";
-        // }
-        //break;
     }
 
     children = root->child;
@@ -238,8 +220,8 @@ int main(int argc, char *argv[])
         temp = temp->sibling;
     }
 
-    // extern void generateASM();
-    // generateASM();
+    extern void generateASM();
+    generateASM();
 
     return 0;
 }
